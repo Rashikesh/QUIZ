@@ -3,29 +3,28 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const QuizResult = require("../models/QuizResult");
 
-// Middleware helper to decode token strings
-const verifyToken = (req, res, next) => {
+// 🛠️ FIX: Explicitly name the validation function to match your route mounts
+const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = authHeader && authHeader.split(" ")[1]; // Extract token from "Bearer TOKEN"
 
-  if (!token)
+  if (!token) {
     return res
       .status(401)
-      .json({ message: "Access Denied: Missing Authorization Session Tokens" });
+      .json({ message: "Access Denied: Missing Session Tokens" });
+  }
 
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified.user;
     next();
   } catch (err) {
-    res
-      .status(400)
-      .json({ message: "Invalid Session Profile Token Verification" });
+    res.status(403).json({ message: "Invalid or Expired Session Token" });
   }
 };
 
-// POST Endpoint to save scores
-router.post("/save-score", verifyToken, async (req, res) => {
+// 1. POST Endpoint to save scores
+router.post("/save-score", authenticateToken, async (req, res) => {
   try {
     const { score, totalQuestions, category, difficulty } = req.body;
 
@@ -48,13 +47,12 @@ router.post("/save-score", verifyToken, async (req, res) => {
   }
 });
 
-// GET Endpoint to fetch live historical scores for the logged-in user
+// 2. GET Endpoint to fetch live historical scores for the logged-in user
 router.get("/my-history", authenticateToken, async (req, res) => {
   try {
-    // Queries the collection for records matching the authenticated user's ID
     const results = await QuizResult.find({ userId: req.user.id }).sort({
       createdAt: -1,
-    }); // Sorts by date in descending order (Newest first)
+    }); // Newest records first
 
     res.json(results);
   } catch (err) {
