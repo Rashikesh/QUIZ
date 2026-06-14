@@ -15,6 +15,8 @@ COOKIE AND SESSION IS NOT USED AND USER DATA IS NOT MANAGED NO ADMIN SITE CAN UP
 
 ## # Qwizzy: A Modernized Full-Stack Distributed Quiz Platform                                                                                           # 2026
 
+https://quiz-p8yw7v929-harshikesh-s-projects.vercel.app/
+
 Qwizzy is a production-ready, cloud-native quiz platform capable of generating dynamic trivia assessments across multiple domain categories (Mathematics, Science & Nature, General Knowledge) with real-time level configuration pipelines. 
 
 This project represents a complete architectural overhaul, migrating a legacy, stateful Java monolithic application into a highly performant, decoupled, and stateless **Next.js frontend** and **MERN backend micro-service architecture**.
